@@ -1,8 +1,8 @@
 #include "headers/positions.h"
 
-pos_t *init_positions(char *filepath, int n) {
+pos_t *init_positions(char *run_name, int n) {
     pos_t *positions = malloc(n * sizeof(pos_t));
-    FILE *file = fopen(filepath, "r");
+    FILE *file = input_file(run_name);
 
     for (int i = 0; i < n; i++) {
         double x, y, z;
