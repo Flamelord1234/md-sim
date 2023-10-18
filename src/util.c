@@ -1,11 +1,37 @@
 #include "headers/util.h"
 
+FILE *input_file(char *run_name) {
+    char *file_path = malloc((strlen(run_name) + 11 + 1) * sizeof(char));
+    sprintf(file_path, "inputs/%s.txt", run_name);
+    FILE *res = fopen(file_path, "r");
+    if (res == NULL) {
+        perror("Error opening input file");
+        exit(1);
+    }
+    free(file_path);
+    return res;
+}
+
+FILE *output_file(char *run_name) {
+    char *file_path = malloc((strlen(run_name) + 12 + 1) * sizeof(char));
+    sprintf(file_path, "outputs/%s.xyz", run_name);
+    FILE *res = fopen(file_path, "w");
+    if (res == NULL) {
+        perror("Error opening output file");
+        exit(1);
+    }
+    free(file_path);
+    return res;
+}
+
 // Requires input file to be formatted exactly as 10.txt is
-int num_lines(char *filepath) {
-    FILE *file = fopen(filepath, "r");
+int num_lines(char *run_name) {
+    FILE *file = input_file(run_name);
+
     int res = 0;
     double temp;
     while (fscanf(file, "%lf", &temp) > 0) res++;
+
     fclose(file);
     return res / 3;
 }

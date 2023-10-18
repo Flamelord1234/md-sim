@@ -1,22 +1,20 @@
 #include "headers/md.h"
 
 int main(int argc, char **argv) {
-    if (argc != 3) {
-        printf("usage: %s <input file> <output file>\n", argv[0]);
+    if (argc != 2) {
+        printf("usage: %s <run name>\n", argv[0]);
         return 0;
     }
 
     srand(time(NULL));
-    
-    FILE *temp_file = fopen("debug/liquid256temp5.txt", "w");
-    FILE *pressure_file = fopen("debug/liquid256pressure5.txt", "w");
-    FILE *output_file = fopen(argv[2], "w");
+
+    char *run_name = argv[1];
 
     fcut = -(48.0 / pow(cutoff, 13.0) - 24.0 / pow(cutoff, 7.0));
     pcut = 4.0 / pow(cutoff, 12.0) - 4.0 / pow(cutoff, 6.0);
 
-    int n = num_lines(argv[1]);
-    pos_t *positions = init_positions(argv[1], n);
+    int n = num_lines(run_name);
+    pos_t *positions = init_positions(run_name, n);
     vel_t *velocities = init_velocities(n);
     frc_t *forces = init_forces(positions, n);
     mom_t *momentums = init_momentums(velocities, n);
@@ -26,7 +24,11 @@ int main(int argc, char **argv) {
     tmp_t temperature = calc_temperature(kinetics, n);
     prs_t pressure = calc_pressure(temperature, positions, n);
 
-    output_positions(positions, n, 0, output_file);
+    FILE *temp_file = fopen("debug/liquid256temp5.txt", "w");
+    FILE *pressure_file = fopen("debug/liquid256pressure5.txt", "w");
+    FILE *positions_file = output_file(run_name);
+
+    output_positions(positions, n, 0, positions_file);
 
     // printf("Time,Metric\n");
     // print_total_momentum(momentums, n);
@@ -61,7 +63,7 @@ int main(int argc, char **argv) {
         // print_z_momentum(momentums, n, tstep * i);
         // print_total_energies(kinetics, potentials, n, tstep * i);
 
-        output_positions(positions, n, i, output_file);
+        output_positions(positions, n, i, positions_file);
     }
     // temperature = calc_temperature(kinetics, n);
     // pressure = calc_pressure(temperature, positions, n);
@@ -70,7 +72,7 @@ int main(int argc, char **argv) {
 
     fclose(temp_file);
     fclose(pressure_file);
-    fclose(output_file);
+    fclose(positions_file);
 
     free(positions);
     free(velocities);
