@@ -1,29 +1,20 @@
 #include "headers/energies.h"
 
-/* Potentials */
+/* Potential */
 
-void calc_potentials(nrg_t *potentials, pos_t *positions, int n) {
+nrg_t calc_potential(pos_t *positions, int n) {
+    double potential = 0;
     for (int i = 0; i < n; i++) {
         for (int j = i + 1; j < n; j++) {
             dis_t distance = calc_nearest_distance(positions[i], positions[j]);
             if (distance.agg > cutoff) continue;
-            potentials[i] += (4.0 / pow(distance.agg, 12.0) - 4.0 / pow(distance.agg, 6.0)) - pcut - (distance.agg - cutoff) * fcut;
+            potential += (4.0 / pow(distance.agg, 12.0) - 4.0 / pow(distance.agg, 6.0)) - pcut - (distance.agg - cutoff) * fcut;
         }
     }
+    return potential;
 }
 
-nrg_t *init_potentials(pos_t *positions, int n) {
-    nrg_t *potentials = calloc(n, sizeof(nrg_t));
-    calc_potentials(potentials, positions, n);
-    return potentials;
-}
-
-void update_potentials(nrg_t *potentials, pos_t *positions, int n) {
-    memset(potentials, 0, n * sizeof(nrg_t));
-    calc_potentials(potentials, positions, n);
-}
-
-/* Kinetics */
+/* Kinetic */
 
 void calc_kinetics(nrg_t *kinetics, mom_t *momentums, int n) {
     for (int i = 0; i < n; i++) {

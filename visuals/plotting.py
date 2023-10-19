@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-info = pd.read_csv('debug/liquid256pressure5.txt')
+info = pd.read_csv('debug/liquid256temp6.txt')
 plt.plot(info['Time'], info['Metric'])
 plt.xlabel('Time')
 plt.ylabel('x-Momentum')
