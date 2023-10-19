@@ -6,8 +6,9 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <stdbool.h>
 
-/* Globals initialized and defined in `md.h` or `md.c` */
+/* Globals initialized and defined in `main.h` or `main.c` */
 
 /* Length of each time step */
 extern const double tstep;
@@ -25,10 +26,10 @@ extern const double velstd;
 extern const double cutoff;
 
 /* Force at cutoff distance */
-extern double fcut;
+extern const double fcut;
 
 /* Potential at cutoff distance */
-extern double pcut;
+extern const double pcut;
 
 typedef double nrg_t;
 typedef double tmp_t;

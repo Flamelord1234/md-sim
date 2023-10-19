@@ -4,8 +4,7 @@
 #include "common.h"
 #include "util.h"
 
-nrg_t *init_potentials(pos_t *positions, int n);
-void update_potentials(nrg_t *potentials, pos_t *positions, int n);
+nrg_t calc_potential(pos_t *positions, int n);
 
 nrg_t *init_kinetics(mom_t *momentums, int n);
 void update_kinetics(nrg_t *kinetics, mom_t *momentums, int n);
