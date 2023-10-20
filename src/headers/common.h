@@ -31,9 +31,16 @@ extern const double fcut;
 /* Potential at cutoff distance */
 extern const double pcut;
 
+/* Thermostat dampening constant */
+extern const double tdamp;
+
+/* Desired system temperature */
+extern const double tempdes;
+
 typedef double nrg_t;
 typedef double tmp_t;
 typedef double prs_t;
+typedef double drg_t;
 
 struct triple {
     double x;

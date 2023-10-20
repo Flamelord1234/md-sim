@@ -7,8 +7,9 @@ void run_md(char *run_name, bool debug) {
     frc_t *forces = init_forces(positions, particles);
     mom_t *momentums = init_momentums(velocities, particles);
     nrg_t *kinetics = init_kinetics(momentums, particles);
-    nrg_t potential = calc_potential(positions, particles);
+    drg_t drag = init_drag();
 
+    nrg_t potential = calc_potential(positions, particles);
     tmp_t temperature = calc_temperature(kinetics, particles);
     prs_t pressure = calc_pressure(temperature, positions, particles);
 
@@ -32,18 +33,20 @@ void run_md(char *run_name, bool debug) {
 
     for (int i = 1; i <= steps; i++) {
         if (i % 500 == 0) printf("%d steps...\n", i);
-        update_velocities(velocities, forces, particles, tstep / 2);
-        update_positions(positions, velocities, particles, tstep);
-        update_forces(forces, positions, particles);
-        update_velocities(velocities, forces, particles, tstep / 2);
-
-        update_momentums(momentums, velocities, particles);
-        update_kinetics(kinetics, momentums, particles);
-        potential = calc_potential(positions, particles);
-        
-        temperature = calc_temperature(kinetics, particles);
+        update_velocities_first(velocities, forces, drag, particles, tstep / 2);  // v(t + dt/2)
+        update_positions(positions, velocities, particles, tstep);  // r(t + dt)
+        update_momentums(momentums, velocities, particles);  // m(t + dt/2)
+        update_kinetics(kinetics, momentums, particles);  // K(t + dt/2)
+        temperature = calc_temperature(kinetics, particles);  // T(t + dt/2)
+        drag = update_drag(drag, temperature, tstep);  // d(t + dt)
+        update_forces(forces, positions, particles);  // F(t + dt)
+        update_velocities_second(velocities, forces, drag, particles, tstep / 2);  // v(t + dt)
+        update_momentums(momentums, velocities, particles);  // m(t + dt)
+        update_kinetics(kinetics, momentums, particles);  // K(t + dt)
+        potential = calc_potential(positions, particles);  // U(t + dt)
+        temperature = calc_temperature(kinetics, particles);  // T(t + dt)
         print_temperature(temp_file, temperature, tstep * i);
-        pressure = calc_pressure(temperature, positions, particles);
+        pressure = calc_pressure(temperature, positions, particles);  // p(t + dt)
         print_pressure(pressure_file, pressure, tstep * i);
 
         // print_total_momentum(momentums, n);

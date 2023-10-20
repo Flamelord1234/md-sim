@@ -23,10 +23,21 @@ vel_t *init_velocities(int n) {
     return velocities;
 }
 
-void update_velocities(vel_t *velocities, frc_t *forces, int n, double tdelta) {
+void update_velocities_first(vel_t *velocities, frc_t *forces, drg_t drag, int n, double tdelta) {
+    for (int i = 0; i < n; i++) {
+        velocities[i].x += tdelta * (forces[i].x - drag * velocities[i].x);
+        velocities[i].y += tdelta * (forces[i].y - drag * velocities[i].y);
+        velocities[i].z += tdelta * (forces[i].z - drag * velocities[i].z);
+    }
+}
+
+void update_velocities_second(vel_t *velocities, frc_t *forces, drg_t drag, int n, double tdelta) {
     for (int i = 0; i < n; i++) {
         velocities[i].x += tdelta * forces[i].x;
+        velocities[i].x /= 1 + tdelta * drag;
         velocities[i].y += tdelta * forces[i].y;
+        velocities[i].y /= 1 + tdelta * drag;
         velocities[i].z += tdelta * forces[i].z;
+        velocities[i].z /= 1 + tdelta * drag;
     }
 }

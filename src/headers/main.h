@@ -7,13 +7,13 @@
 const double tstep = 0.002L;
 
 /* Number of time steps to perform */
-const int steps = 500 * 2000;
+const int steps = 500 * 200;
 
 /* Side length of bounding box */
 const double sidelen = 6.8L;
 
 /* Scaling factor for random velocity generation */
-const double velstd = 0.05; // 0.70710678118L;
+const double velstd = 0.1;
 
 #define CUTOFF 1L
 #define CUTOFF6 (CUTOFF * CUTOFF * CUTOFF * CUTOFF * CUTOFF * CUTOFF)
@@ -27,5 +27,11 @@ const double fcut = -(48.0 / (CUTOFF6 * CUTOFF6 * CUTOFF) - 24.0 / (CUTOFF6 * CU
 const double pcut = 4.0 / (CUTOFF6 * CUTOFF6) - 4.0 / CUTOFF6;
 #undef CUTOFF
 #undef CUTOFF6
+
+/* Thermostat dampening constant */
+const double tdamp = 0.05;
+
+/* Desired system temperature */
+const double tempdes = 0.8L;
 
 #endif  // MAIN_H

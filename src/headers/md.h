@@ -10,6 +10,7 @@
 #include "momentums.h"
 #include "temperature.h"
 #include "pressure.h"
+#include "drag.h"
 
 void run_md(char *run_name, bool debug);
 
