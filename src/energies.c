@@ -37,6 +37,12 @@ void update_kinetics(nrg_t *kinetics, mom_t *momentums, int n) {
 
 /* Printing */
 
+void print_kinetic(FILE *file, nrg_t *kinetics, int n, double time) {
+    double kinetic = 0;
+    for (int i = 0; i < n; i++) kinetic += kinetics[i];
+    fprintf(file, "%.20lf,%.20lf\n", time, kinetic);
+}
+
 void print_total_energies(nrg_t *kinetics, nrg_t *potentials, int n, double time) {
     double kin = 0;
     double pot = 0;

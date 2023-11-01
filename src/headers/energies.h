@@ -10,5 +10,6 @@ nrg_t *init_kinetics(mom_t *momentums, int n);
 void update_kinetics(nrg_t *kinetics, mom_t *momentums, int n);
 
 void print_total_energies(nrg_t *kinetics, nrg_t *potentials, int n, double time);
+void print_kinetic(FILE *file, nrg_t *kinetics, int n, double time);
 
 #endif  // ENERGIES_H

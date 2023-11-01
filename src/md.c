@@ -15,6 +15,7 @@ void run_md(char *run_name, bool debug) {
 
     FILE *temp_file = fopen("debug/liquid256temp6.txt", "w");
     FILE *pressure_file = fopen("debug/liquid256pressure6.txt", "w");
+    FILE *kinetic_file = fopen("debug/liquid256kinetic6.txt", "w");
     FILE *positions_file = output_file(run_name);
 
     output_positions(positions, particles, 0, positions_file);
@@ -26,10 +27,12 @@ void run_md(char *run_name, bool debug) {
     // print_z_momentum(momentums, n, 0.0);
     fprintf(temp_file, "Time,Metric\n");
     fprintf(pressure_file, "Time,Metric\n");
+    fprintf(kinetic_file, "Time,Metric\n");
     // print_total_energies(kinetics, potentials, n, 0.0);
     
     print_temperature(temp_file, temperature, 0.0);
     print_pressure(pressure_file, pressure, 0.0);
+    print_kinetic(kinetic_file, kinetics, particles, 0.0);
 
     for (int i = 1; i <= steps; i++) {
         if (i % 500 == 0) printf("%d steps...\n", i);
@@ -43,6 +46,7 @@ void run_md(char *run_name, bool debug) {
         update_velocities_second(velocities, forces, drag, particles, tstep / 2);  // v(t + dt)
         update_momentums(momentums, velocities, particles);  // m(t + dt)
         update_kinetics(kinetics, momentums, particles);  // K(t + dt)
+        print_kinetic(kinetic_file, kinetics, particles, tstep * i);
         potential = calc_potential(positions, particles);  // U(t + dt)
         temperature = calc_temperature(kinetics, particles);  // T(t + dt)
         print_temperature(temp_file, temperature, tstep * i);
@@ -64,6 +68,7 @@ void run_md(char *run_name, bool debug) {
 
     fclose(temp_file);
     fclose(pressure_file);
+    fclose(kinetic_file);
     fclose(positions_file);
 
     free(positions);
