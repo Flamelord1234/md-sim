@@ -23,21 +23,37 @@ vel_t *init_velocities(int n) {
     return velocities;
 }
 
-void update_velocities_first(vel_t *velocities, frc_t *forces, drg_t drag, int n, double tdelta) {
-    for (int i = 0; i < n; i++) {
-        velocities[i].x += tdelta * (forces[i].x - drag * velocities[i].x);
-        velocities[i].y += tdelta * (forces[i].y - drag * velocities[i].y);
-        velocities[i].z += tdelta * (forces[i].z - drag * velocities[i].z);
+void update_velocities_first(vel_t *velocities, frc_t *forces, drg_t drag, int n, bool thermostat, double tdelta) {
+    if (thermostat) {
+        for (int i = 0; i < n; i++) {
+            velocities[i].x += tdelta * (forces[i].x - drag * velocities[i].x);
+            velocities[i].y += tdelta * (forces[i].y - drag * velocities[i].y);
+            velocities[i].z += tdelta * (forces[i].z - drag * velocities[i].z);
+        }
+    } else {
+        for (int i = 0; i < n; i++) {
+            velocities[i].x += tdelta * forces[i].x;
+            velocities[i].y += tdelta * forces[i].y;
+            velocities[i].z += tdelta * forces[i].z;
+        }
     }
 }
 
-void update_velocities_second(vel_t *velocities, frc_t *forces, drg_t drag, int n, double tdelta) {
-    for (int i = 0; i < n; i++) {
-        velocities[i].x += tdelta * forces[i].x;
-        velocities[i].x /= 1 + tdelta * drag;
-        velocities[i].y += tdelta * forces[i].y;
-        velocities[i].y /= 1 + tdelta * drag;
-        velocities[i].z += tdelta * forces[i].z;
-        velocities[i].z /= 1 + tdelta * drag;
+void update_velocities_second(vel_t *velocities, frc_t *forces, drg_t drag, int n, bool thermostat, double tdelta) {
+    if (thermostat) {
+        for (int i = 0; i < n; i++) {
+            velocities[i].x += tdelta * forces[i].x;
+            velocities[i].x /= 1 + tdelta * drag;
+            velocities[i].y += tdelta * forces[i].y;
+            velocities[i].y /= 1 + tdelta * drag;
+            velocities[i].z += tdelta * forces[i].z;
+            velocities[i].z /= 1 + tdelta * drag;
+        }
+    } else {
+        for (int i = 0; i < n; i++) {
+            velocities[i].x += tdelta * forces[i].x;
+            velocities[i].y += tdelta * forces[i].y;
+            velocities[i].z += tdelta * forces[i].z;
+        }
     }
 }

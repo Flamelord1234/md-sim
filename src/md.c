@@ -36,14 +36,15 @@ void run_md(char *run_name, bool debug) {
 
     for (int i = 1; i <= steps; i++) {
         if (i % 500 == 0) printf("%d steps...\n", i);
-        update_velocities_first(velocities, forces, drag, particles, tstep / 2);  // v(t + dt/2)
+        
+        update_velocities_first(velocities, forces, drag, particles, true, tstep / 2);  // v(t + dt/2)
         update_positions(positions, velocities, particles, tstep);  // r(t + dt)
         update_momentums(momentums, velocities, particles);  // m(t + dt/2)
         update_kinetics(kinetics, momentums, particles);  // K(t + dt/2)
         temperature = calc_temperature(kinetics, particles);  // T(t + dt/2)
         drag = update_drag(drag, temperature, tstep);  // d(t + dt)
         update_forces(forces, positions, particles);  // F(t + dt)
-        update_velocities_second(velocities, forces, drag, particles, tstep / 2);  // v(t + dt)
+        update_velocities_second(velocities, forces, drag, particles, true, tstep / 2);  // v(t + dt)
         update_momentums(momentums, velocities, particles);  // m(t + dt)
         update_kinetics(kinetics, momentums, particles);  // K(t + dt)
         print_kinetic(kinetic_file, kinetics, particles, tstep * i);
