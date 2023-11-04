@@ -16,6 +16,9 @@ extern const double tstep;
 /* Number of time steps to perform */
 extern const int steps;
 
+/* Number of time steps until thermostat turns off */
+extern const int thermostat_steps;
+
 /* Side length of bounding box */
 extern const double sidelen;
 

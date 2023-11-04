@@ -39,3 +39,25 @@ void output_positions(pos_t *positions, int n, int step, FILE *file) {
         fprintf(file, "a\t%.20lf\t%.20lf\t%.20lf\n", positions[i].x, positions[i].y, positions[i].z);
     }
 }
+
+pos_t *init_displacements(int n) {
+    return calloc(n, sizeof(pos_t));
+}
+
+void update_displacements(pos_t *displacements, vel_t *velocities, int n, double tdelta) {
+    for (int i = 0; i < n; i++) {
+        displacements[i].x += tdelta * velocities[i].x;
+        displacements[i].y += tdelta * velocities[i].y;
+        displacements[i].z += tdelta * velocities[i].z;
+    }
+}
+
+void print_displacements(FILE *file, pos_t *displacements, int n, double time) {
+    double msd = 0;
+    for (int i = 0; i < n; i++) {
+        msd += displacements[i].x * displacements[i].x;
+        msd += displacements[i].y * displacements[i].y;
+        msd += displacements[i].z * displacements[i].z;
+    }
+   fprintf(file, "%.20lf,%.20lf\n", time, msd / n);
+}
