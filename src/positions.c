@@ -61,3 +61,28 @@ void print_displacements(FILE *file, pos_t *displacements, int n, double time) {
     }
    fprintf(file, "%.20lf,%.20lf\n", time, msd / n);
 }
+
+void calc_mc_positions(pos_t *positions, int n) {
+    for (int i = 0; i < n; i++) {
+        nrg_t curr_potential = calc_elem_potential(positions, i, n);
+        pos_t curr_position = positions[i];
+
+        positions[i].x = rnorm(positions[i].x, 0.4);
+        positions[i].y = rnorm(positions[i].y, 0.4);
+        positions[i].z = rnorm(positions[i].z, 0.4);
+
+        while (positions[i].x > sidelen) positions[i].x -= sidelen;
+        while (positions[i].x < 0) positions[i].x += sidelen;
+        while (positions[i].y > sidelen) positions[i].y -= sidelen;
+        while (positions[i].y < 0) positions[i].y += sidelen;
+        while (positions[i].z > sidelen) positions[i].z -= sidelen;
+        while (positions[i].z < 0) positions[i].z += sidelen;
+
+        nrg_t trial_potential = calc_elem_potential(positions, i, n);
+
+        if (trial_potential >= curr_potential) {
+            double prob = exp(-((1.0L / tempdes) * (trial_potential - curr_potential)));
+            if (((double) rand()) / ((double) (RAND_MAX / 1.0L)) > prob) positions[i] = curr_position;
+        }
+    }
+}

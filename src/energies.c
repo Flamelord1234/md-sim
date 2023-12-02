@@ -14,6 +14,17 @@ nrg_t calc_potential(pos_t *positions, int n) {
     return potential;
 }
 
+nrg_t calc_elem_potential(pos_t *positions, int index, int n) {
+    double potential = 0;
+    for (int i = 0; i < n; i++) {
+        if (i == index) continue;
+        dis_t distance = calc_nearest_distance(positions[i], positions[index]);
+        if (distance.agg > cutoff) continue;
+        potential += (4.0 / pow(distance.agg, 12.0) - 4.0 / pow(distance.agg, 6.0)) - pcut - (distance.agg - cutoff) * fcut;
+    }
+    return potential;
+}
+
 /* Kinetic */
 
 void calc_kinetics(nrg_t *kinetics, mom_t *momentums, int n) {
@@ -41,6 +52,10 @@ void print_kinetic(FILE *file, nrg_t *kinetics, int n, double time) {
     double kinetic = 0;
     for (int i = 0; i < n; i++) kinetic += kinetics[i];
     fprintf(file, "%.20lf,%.20lf\n", time, kinetic);
+}
+
+void print_potential(FILE *file, nrg_t potential, double time) {
+    fprintf(file, "%.20lf,%.20lf\n", time, potential);
 }
 
 void print_total_energies(nrg_t *kinetics, nrg_t *potentials, int n, double time) {

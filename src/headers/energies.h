@@ -5,11 +5,13 @@
 #include "util.h"
 
 nrg_t calc_potential(pos_t *positions, int n);
+nrg_t calc_elem_potential(pos_t *positions, int index, int n);
 
 nrg_t *init_kinetics(mom_t *momentums, int n);
 void update_kinetics(nrg_t *kinetics, mom_t *momentums, int n);
 
 void print_total_energies(nrg_t *kinetics, nrg_t *potentials, int n, double time);
 void print_kinetic(FILE *file, nrg_t *kinetics, int n, double time);
+void print_potential(FILE *file, nrg_t potential, double time);
 
 #endif  // ENERGIES_H
