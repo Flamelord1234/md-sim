@@ -84,7 +84,7 @@ void run_md(char *run_name, bool debug) {
     // print_temperature(temperature, tstep * steps);
     // print_pressure(pressure, tstep * steps);
 
-    printf("avg K: %lf, avg U: %lf, avg T: %lf, avg P: %lf\n", total_K / thermostat_steps, total_U / thermostat_steps, total_T / thermostat_steps, total_P / thermostat_steps);
+    printf("avg K: %lf, avg U: %lf, avg T: %lf, avg P: %lf\n", total_K / (steps - thermostat_steps), total_U / (steps - thermostat_steps), total_T / (steps - thermostat_steps), total_P / (steps - thermostat_steps));
 
     fclose(msd_file);
     fclose(temp_file);
