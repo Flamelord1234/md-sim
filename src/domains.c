@@ -34,9 +34,9 @@ int get_domain_within(pos_t position) {
         return 5;
     } else if (position.x < sidelen && position.y < sidelen && position.z < sidelen / 2) {
         return 6;
-    } else {
+    } else if (position.x < sidelen && position.y < sidelen && position.z < sidelen) {
         return 7;
-    }
+    } else printf("ERROR!!!\n");
 }
 
 double max(double a, double b, double c) {
@@ -144,6 +144,19 @@ void populate_domains(dom_t domains[8], pos_t *positions, int n) {
         push_domain_within(&domains[domain], i);
 
         populate_cutoffs(domains, domain, positions[i], i);
+    }
+}
+
+void populate_domains_2(dom_t domains[8], pos_t *positions, int n) {
+    for (int i = 1; i < 8; i++) {
+        domains[i].within_num = 0;
+        domains[i].cutoff_num = 0;
+    }
+
+    domains[0].within_num = n;
+    domains[0].cutoff_num = 0;
+    for (int i = 0; i < n; i++) {
+        domains[0].within[i] = i;
     }
 }
 
