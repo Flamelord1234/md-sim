@@ -7,10 +7,10 @@
 const double tstep = 0.002L;
 
 /* Number of time steps to perform */
-const int steps = 400;
+const int steps = 500 * 20;
 
 /* Number of time steps until thermostat turns off */
-const int thermostat_steps = 500 * 0;
+const int thermostat_steps = 500 * 10;
 
 /* Side length of bounding box */
 const double sidelen = 6.8L;
