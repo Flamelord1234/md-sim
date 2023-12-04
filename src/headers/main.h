@@ -7,7 +7,7 @@
 const double tstep = 0.002L;
 
 /* Number of time steps to perform */
-const int steps = 40;
+const int steps = 500;
 
 /* Number of time steps until thermostat turns off */
 const int thermostat_steps = 500 * 0;

@@ -48,7 +48,7 @@ void run_md(char *run_name, bool debug) {
 
     init_domains(domains, particles);
     populate_domains(domains, positions, particles);
-    print_domains(domains);
+    // print_domains(domains);
 
     // printf("%lf\n", domain_distance(positions[2], 0));
     // return;
@@ -65,14 +65,15 @@ void run_md(char *run_name, bool debug) {
         }
 
         populate_domains(domains, positions, particles);
-        print_domains(domains);
+        // print_domains(domains);
 
         temperature = calc_temperature(kinetics, particles);  // T(t + dt/2)
         drag = update_drag(drag, temperature, tstep);  // d(t + dt)
 
+        memset(temp_forces, 0, particles * sizeof(frc_t));
         for (int dom = 0; dom < 8; dom++) {
             update_forces(domains, dom, temp_forces, positions, particles);  // F(t + dt)
-            update_velocities_second(domains, dom, velocities, forces, drag, particles, i <= thermostat_steps, tstep / 2);  // v(t + dt)
+            update_velocities_second(domains, dom, velocities, temp_forces, drag, particles, i <= thermostat_steps, tstep / 2);  // v(t + dt)
             update_momentums(domains, dom, momentums, velocities, particles);  // m(t + dt)
             update_kinetics(domains, dom, kinetics, momentums, particles);  // K(t + dt)
         }
