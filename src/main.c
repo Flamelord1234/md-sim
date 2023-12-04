@@ -6,7 +6,8 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    srand(time(NULL));
+    // srand(time(NULL));
+    srand(0);
 
     run_md(argv[1], true);
 

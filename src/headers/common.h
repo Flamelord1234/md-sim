@@ -63,4 +63,12 @@ struct aggregate {
 };
 typedef struct aggregate dis_t;
 
+struct domain {
+    int *within;
+    int within_num;
+    int *cutoff;
+    int cutoff_num;
+};
+typedef struct domain dom_t;
+
 #endif  // COMMON_H

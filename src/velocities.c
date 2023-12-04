@@ -5,6 +5,7 @@ vel_t *init_velocities(int n) {
     double totx = 0;
     double toty = 0;
     double totz = 0;
+    #pragma clang loop vectorize(enable) interleave(enable)
     for (int i = 0; i < n - 1; i++) {
         double vx = rnorm(0, velstd);
         double vy = rnorm(0, velstd);
@@ -23,37 +24,45 @@ vel_t *init_velocities(int n) {
     return velocities;
 }
 
-void update_velocities_first(vel_t *velocities, frc_t *forces, drg_t drag, int n, bool thermostat, double tdelta) {
+vel_t *empty_velocities(int n) {
+    return malloc(n * sizeof(vel_t));
+}
+
+void update_velocities_first(dom_t domains[8], int domain, vel_t *velocities, frc_t *forces, drg_t drag, int n, bool thermostat, double tdelta) {
     if (thermostat) {
-        for (int i = 0; i < n; i++) {
-            velocities[i].x += tdelta * (forces[i].x - drag * velocities[i].x);
-            velocities[i].y += tdelta * (forces[i].y - drag * velocities[i].y);
-            velocities[i].z += tdelta * (forces[i].z - drag * velocities[i].z);
+        #pragma clang loop vectorize(enable) interleave(enable)
+        for (int i = 0; i < domains[domain].within_num; i++) {
+            velocities[domains[domain].within[i]].x += tdelta * (forces[domains[domain].within[i]].x - drag * velocities[domains[domain].within[i]].x);
+            velocities[domains[domain].within[i]].y += tdelta * (forces[domains[domain].within[i]].y - drag * velocities[domains[domain].within[i]].y);
+            velocities[domains[domain].within[i]].z += tdelta * (forces[domains[domain].within[i]].z - drag * velocities[domains[domain].within[i]].z);
         }
     } else {
-        for (int i = 0; i < n; i++) {
-            velocities[i].x += tdelta * forces[i].x;
-            velocities[i].y += tdelta * forces[i].y;
-            velocities[i].z += tdelta * forces[i].z;
+        #pragma clang loop vectorize(enable) interleave(enable)
+        for (int i = 0; i < domains[domain].within_num; i++) {
+            velocities[domains[domain].within[i]].x += tdelta * forces[domains[domain].within[i]].x;
+            velocities[domains[domain].within[i]].y += tdelta * forces[domains[domain].within[i]].y;
+            velocities[domains[domain].within[i]].z += tdelta * forces[domains[domain].within[i]].z;
         }
     }
 }
 
-void update_velocities_second(vel_t *velocities, frc_t *forces, drg_t drag, int n, bool thermostat, double tdelta) {
+void update_velocities_second(dom_t domains[8], int domain, vel_t *velocities, frc_t *forces, drg_t drag, int n, bool thermostat, double tdelta) {
     if (thermostat) {
-        for (int i = 0; i < n; i++) {
-            velocities[i].x += tdelta * forces[i].x;
-            velocities[i].x /= 1 + tdelta * drag;
-            velocities[i].y += tdelta * forces[i].y;
-            velocities[i].y /= 1 + tdelta * drag;
-            velocities[i].z += tdelta * forces[i].z;
-            velocities[i].z /= 1 + tdelta * drag;
+        #pragma clang loop vectorize(enable) interleave(enable)
+        for (int i = 0; i < domains[domain].within_num; i++) {
+            velocities[domains[domain].within[i]].x += tdelta * forces[domains[domain].within[i]].x;
+            velocities[domains[domain].within[i]].x /= 1 + tdelta * drag;
+            velocities[domains[domain].within[i]].y += tdelta * forces[domains[domain].within[i]].y;
+            velocities[domains[domain].within[i]].y /= 1 + tdelta * drag;
+            velocities[domains[domain].within[i]].z += tdelta * forces[domains[domain].within[i]].z;
+            velocities[domains[domain].within[i]].z /= 1 + tdelta * drag;
         }
     } else {
-        for (int i = 0; i < n; i++) {
-            velocities[i].x += tdelta * forces[i].x;
-            velocities[i].y += tdelta * forces[i].y;
-            velocities[i].z += tdelta * forces[i].z;
+        #pragma clang loop vectorize(enable) interleave(enable)
+        for (int i = 0; i < domains[domain].within_num; i++) {
+            velocities[domains[domain].within[i]].x += tdelta * forces[domains[domain].within[i]].x;
+            velocities[domains[domain].within[i]].y += tdelta * forces[domains[domain].within[i]].y;
+            velocities[domains[domain].within[i]].z += tdelta * forces[domains[domain].within[i]].z;
         }
     }
 }

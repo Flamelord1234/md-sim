@@ -11,6 +11,7 @@
 #include "temperature.h"
 #include "pressure.h"
 #include "drag.h"
+#include "domains.h"
 
 void run_md(char *run_name, bool debug);
 

@@ -2,10 +2,14 @@
 
 void run_md(char *run_name, bool debug) {
     int particles = num_lines(run_name);
+
+    dom_t domains[8];
+
     pos_t *positions = init_positions(run_name, particles);
     pos_t *displacements = init_displacements(particles);
     vel_t *velocities = init_velocities(particles);
     frc_t *forces = init_forces(positions, particles);
+    frc_t *temp_forces = malloc(particles * sizeof(frc_t));
     mom_t *momentums = init_momentums(velocities, particles);
     nrg_t *kinetics = init_kinetics(momentums, particles);
     drg_t drag = init_drag();
@@ -42,20 +46,31 @@ void run_md(char *run_name, bool debug) {
 
     double total_K = 0, total_U = 0, total_T = 0, total_P = 0;
 
+    init_domains(domains, particles);
+    populate_domains(domains, positions, particles);
+
     for (int i = 1; i <= steps; i++) {
         if (i % 500 == 0) printf("%d steps...\n", i);
 
-        update_velocities_first(velocities, forces, drag, particles, i <= thermostat_steps, tstep / 2);  // v(t + dt/2)
-        update_positions(positions, velocities, particles, tstep);  // r(t + dt)
-        update_displacements(displacements, velocities, particles, tstep);
-        update_momentums(momentums, velocities, particles);  // m(t + dt/2)
-        update_kinetics(kinetics, momentums, particles);  // K(t + dt/2)
+        for (int dom = 0; dom < 8; dom++) {
+            update_velocities_first(domains, dom, velocities, forces, drag, particles, i <= thermostat_steps, tstep / 2);  // v(t + dt/2)
+            update_positions(domains, dom, positions, velocities, particles, tstep);  // r(t + dt)
+            update_displacements(domains, dom, displacements, velocities, particles, tstep);
+            update_momentums(domains, dom, momentums, velocities, particles);  // m(t + dt/2)
+            update_kinetics(domains, dom, kinetics, momentums, particles);  // K(t + dt/2)
+        }
+
         temperature = calc_temperature(kinetics, particles);  // T(t + dt/2)
         drag = update_drag(drag, temperature, tstep);  // d(t + dt)
-        update_forces(forces, positions, particles);  // F(t + dt)
-        update_velocities_second(velocities, forces, drag, particles, i <= thermostat_steps, tstep / 2);  // v(t + dt)
-        update_momentums(momentums, velocities, particles);  // m(t + dt)
-        update_kinetics(kinetics, momentums, particles);  // K(t + dt)
+
+        for (int dom = 0; dom < 8; dom++) {
+            update_forces(domains, dom, temp_forces, positions, particles);  // F(t + dt)
+            update_velocities_second(domains, dom, velocities, forces, drag, particles, i <= thermostat_steps, tstep / 2);  // v(t + dt)
+            update_momentums(domains, dom, momentums, velocities, particles);  // m(t + dt)
+            update_kinetics(domains, dom, kinetics, momentums, particles);  // K(t + dt)
+        }
+
+        memcpy(forces, temp_forces, particles * sizeof(frc_t));
         potential = calc_potential(positions, particles);  // U(t + dt)
         temperature = calc_temperature(kinetics, particles);  // T(t + dt)
         pressure = calc_pressure(temperature, positions, particles);  // p(t + dt)
@@ -78,13 +93,15 @@ void run_md(char *run_name, bool debug) {
 
             if (i % 10 == 0) output_positions(positions, particles, i, positions_file);
         }
+
+        populate_domains(domains, positions, particles);
     }
     // temperature = calc_temperature(kinetics, n);
     // pressure = calc_pressure(temperature, positions, n);
     // print_temperature(temperature, tstep * steps);
     // print_pressure(pressure, tstep * steps);
 
-    printf("avg K: %lf, avg U: %lf, avg T: %lf, avg P: %lf\n", total_K / thermostat_steps, total_U / thermostat_steps, total_T / thermostat_steps, total_P / thermostat_steps);
+    printf("avg K: %lf, avg U: %lf, avg T: %lf, avg P: %lf\n", total_K / (steps - thermostat_steps), total_U / (steps - thermostat_steps), total_T / (steps - thermostat_steps), total_P / (steps - thermostat_steps));
 
     fclose(msd_file);
     fclose(temp_file);

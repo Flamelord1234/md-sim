@@ -52,6 +52,20 @@ dis_t calc_nearest_distance(pos_t p1, pos_t p2) {
     return (dis_t) { .x = x, .y = y, .z = z, .agg = agg };
 }
 
+double calc_nearest_distance_magnitude(pos_t p1, pos_t p2) {
+    double x = p2.x - p1.x;
+    if (x < -(sidelen / 2)) x += sidelen;
+    else if (x > sidelen / 2) x -= sidelen;
+    double y = p2.y - p1.y;
+    if (y < -(sidelen / 2)) y += sidelen;
+    else if (y > sidelen / 2) y -= sidelen;
+    double z = p2.z - p1.z;
+    if (z < -(sidelen / 2)) z += sidelen;
+    else if (z > sidelen / 2) z -= sidelen;
+
+    return sqrt(x * x + y * y + z * z);
+}
+
 /* LJ force on particle a, where particle b is at distance `distance` */
 frc_t calc_force(dis_t distance) {
     if (distance.agg > cutoff) return (frc_t) { .x = 0, .y = 0, .z = 0 };

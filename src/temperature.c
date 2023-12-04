@@ -2,6 +2,7 @@
 
 tmp_t calc_temperature(nrg_t *kinetics, int n) {
     double totk = 0;
+    #pragma clang loop vectorize(enable) interleave(enable)
     for (int i = 0; i < n; i++) totk += kinetics[i];
     return 2 * totk / (3 * (n - 1));
 }

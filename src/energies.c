@@ -4,7 +4,9 @@
 
 nrg_t calc_potential(pos_t *positions, int n) {
     double potential = 0;
+    #pragma clang loop vectorize(enable) interleave(enable)
     for (int i = 0; i < n; i++) {
+        #pragma clang loop vectorize(enable) interleave(enable)
         for (int j = i + 1; j < n; j++) {
             dis_t distance = calc_nearest_distance(positions[i], positions[j]);
             if (distance.agg > cutoff) continue;
@@ -17,6 +19,7 @@ nrg_t calc_potential(pos_t *positions, int n) {
 /* Kinetic */
 
 void calc_kinetics(nrg_t *kinetics, mom_t *momentums, int n) {
+    #pragma clang loop vectorize(enable) interleave(enable)
     for (int i = 0; i < n; i++) {
         double mx2 = momentums[i].x * momentums[i].x;
         double my2 = momentums[i].y * momentums[i].y;
@@ -31,14 +34,25 @@ nrg_t *init_kinetics(mom_t *momentums, int n) {
     return kinetics;
 }
 
-void update_kinetics(nrg_t *kinetics, mom_t *momentums, int n) {
-    calc_kinetics(kinetics, momentums, n);
+nrg_t *empty_kinetics(int n) {
+    return malloc(n * sizeof(nrg_t));
+}
+
+void update_kinetics(dom_t domains[8], int domain, nrg_t *kinetics, mom_t *momentums, int n) {
+    #pragma clang loop vectorize(enable) interleave(enable)
+    for (int i = 0; i < domains[domain].within_num; i++) {
+        double mx2 = momentums[domains[domain].within[i]].x * momentums[domains[domain].within[i]].x;
+        double my2 = momentums[domains[domain].within[i]].y * momentums[domains[domain].within[i]].y;
+        double mz2 = momentums[domains[domain].within[i]].z * momentums[domains[domain].within[i]].z;
+        kinetics[domains[domain].within[i]] = (mx2 + my2 + mz2) / 2;
+    }
 }
 
 /* Printing */
 
 void print_kinetic(FILE *file, nrg_t *kinetics, int n, double time) {
     double kinetic = 0;
+    #pragma clang loop vectorize(enable) interleave(enable)
     for (int i = 0; i < n; i++) kinetic += kinetics[i];
     fprintf(file, "%.20lf,%.20lf\n", time, kinetic);
 }
@@ -46,6 +60,7 @@ void print_kinetic(FILE *file, nrg_t *kinetics, int n, double time) {
 void print_total_energies(nrg_t *kinetics, nrg_t *potentials, int n, double time) {
     double kin = 0;
     double pot = 0;
+    #pragma clang loop vectorize(enable) interleave(enable)
     for (int i = 0; i < n; i++) {
         kin += kinetics[i];
         pot += potentials[i];
