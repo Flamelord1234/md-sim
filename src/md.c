@@ -48,6 +48,10 @@ void run_md(char *run_name, bool debug) {
 
     init_domains(domains, particles);
     populate_domains(domains, positions, particles);
+    print_domains(domains);
+
+    // printf("%lf\n", domain_distance(positions[2], 0));
+    // return;
 
     for (int i = 1; i <= steps; i++) {
         if (i % 500 == 0) printf("%d steps...\n", i);
@@ -59,6 +63,9 @@ void run_md(char *run_name, bool debug) {
             update_momentums(domains, dom, momentums, velocities, particles);  // m(t + dt/2)
             update_kinetics(domains, dom, kinetics, momentums, particles);  // K(t + dt/2)
         }
+
+        populate_domains(domains, positions, particles);
+        print_domains(domains);
 
         temperature = calc_temperature(kinetics, particles);  // T(t + dt/2)
         drag = update_drag(drag, temperature, tstep);  // d(t + dt)
@@ -93,8 +100,6 @@ void run_md(char *run_name, bool debug) {
 
             if (i % 10 == 0) output_positions(positions, particles, i, positions_file);
         }
-
-        populate_domains(domains, positions, particles);
     }
     // temperature = calc_temperature(kinetics, n);
     // pressure = calc_pressure(temperature, positions, n);

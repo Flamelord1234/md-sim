@@ -48,7 +48,7 @@ double max(double a, double b, double c) {
 }
 
 double min(double a, double b) {
-    return a > b ? a : b;
+    return a > b ? b : a;
 }
 
 double box_distance(double min_x, double max_x, double min_y, double max_y, double min_z, double max_z, pos_t position) {
@@ -67,34 +67,61 @@ double domain_distance(pos_t position, int domain) {
     double max_z = (sidelen / 2) + (sidelen / 2) * (domain & 1);
 
     double distance = box_distance(min_x, max_x, min_y, max_y, min_z, max_z, position);
+    // printf("%lf\n", distance);
     distance = min(distance, box_distance(min_x, max_x, min_y, max_y, min_z - sidelen, max_z - sidelen, position));
+    // printf("%lf\n", distance);
     distance = min(distance, box_distance(min_x, max_x, min_y, max_y, min_z + sidelen, max_z + sidelen, position));
+    // printf("%lf\n", distance);
     distance = min(distance, box_distance(min_x, max_x, min_y - sidelen, max_y - sidelen, min_z, max_z, position));
+    // printf("%lf\n", distance);
     distance = min(distance, box_distance(min_x, max_x, min_y - sidelen, max_y - sidelen, min_z - sidelen, max_z - sidelen, position));
+    // printf("%lf\n", distance);
     distance = min(distance, box_distance(min_x, max_x, min_y - sidelen, max_y - sidelen, min_z + sidelen, max_z + sidelen, position));
+    // printf("%lf\n", distance);
     distance = min(distance, box_distance(min_x, max_x, min_y + sidelen, max_y + sidelen, min_z, max_z, position));
+    // printf("%lf\n", distance);
     distance = min(distance, box_distance(min_x, max_x, min_y + sidelen, max_y + sidelen, min_z - sidelen, max_z - sidelen, position));
+    // printf("%lf\n", distance);
     distance = min(distance, box_distance(min_x, max_x, min_y + sidelen, max_y + sidelen, min_z + sidelen, max_z + sidelen, position));
+    // printf("%lf\n", distance);
     
     distance = min(distance, box_distance(min_x - sidelen, max_x - sidelen, min_y, max_y, min_z, max_z, position));
+    // printf("%lf\n", distance);
     distance = min(distance, box_distance(min_x - sidelen, max_x - sidelen, min_y, max_y, min_z - sidelen, max_z - sidelen, position));
+    // printf("%lf\n", distance);
     distance = min(distance, box_distance(min_x - sidelen, max_x - sidelen, min_y, max_y, min_z + sidelen, max_z + sidelen, position));
+    // printf("%lf\n", distance);
     distance = min(distance, box_distance(min_x - sidelen, max_x - sidelen, min_y - sidelen, max_y - sidelen, min_z, max_z, position));
+    // printf("%lf\n", distance);
     distance = min(distance, box_distance(min_x - sidelen, max_x - sidelen, min_y - sidelen, max_y - sidelen, min_z - sidelen, max_z - sidelen, position));
+    // printf("%lf\n", distance);
     distance = min(distance, box_distance(min_x - sidelen, max_x - sidelen, min_y - sidelen, max_y - sidelen, min_z + sidelen, max_z + sidelen, position));
+    // printf("%lf\n", distance);
     distance = min(distance, box_distance(min_x - sidelen, max_x - sidelen, min_y + sidelen, max_y + sidelen, min_z, max_z, position));
+    // printf("%lf\n", distance);
     distance = min(distance, box_distance(min_x - sidelen, max_x - sidelen, min_y + sidelen, max_y + sidelen, min_z - sidelen, max_z - sidelen, position));
+    // printf("%lf\n", distance);
     distance = min(distance, box_distance(min_x - sidelen, max_x - sidelen, min_y + sidelen, max_y + sidelen, min_z + sidelen, max_z + sidelen, position));
+    // printf("%lf\n", distance);
 
     distance = min(distance, box_distance(min_x + sidelen, max_x + sidelen, min_y, max_y, min_z, max_z, position));
+    // printf("%lf\n", distance);
     distance = min(distance, box_distance(min_x + sidelen, max_x + sidelen, min_y, max_y, min_z - sidelen, max_z - sidelen, position));
+    // printf("%lf\n", distance);
     distance = min(distance, box_distance(min_x + sidelen, max_x + sidelen, min_y, max_y, min_z + sidelen, max_z + sidelen, position));
+    // printf("%lf\n", distance);
     distance = min(distance, box_distance(min_x + sidelen, max_x + sidelen, min_y - sidelen, max_y - sidelen, min_z, max_z, position));
+    // printf("%lf\n", distance);
     distance = min(distance, box_distance(min_x + sidelen, max_x + sidelen, min_y - sidelen, max_y - sidelen, min_z - sidelen, max_z - sidelen, position));
+    // printf("%lf\n", distance);
     distance = min(distance, box_distance(min_x + sidelen, max_x + sidelen, min_y - sidelen, max_y - sidelen, min_z + sidelen, max_z + sidelen, position));
+    // printf("%lf\n", distance);
     distance = min(distance, box_distance(min_x + sidelen, max_x + sidelen, min_y + sidelen, max_y + sidelen, min_z, max_z, position));
+    // printf("%lf\n", distance);
     distance = min(distance, box_distance(min_x + sidelen, max_x + sidelen, min_y + sidelen, max_y + sidelen, min_z - sidelen, max_z - sidelen, position));
+    // printf("%lf\n", distance);
     distance = min(distance, box_distance(min_x + sidelen, max_x + sidelen, min_y + sidelen, max_y + sidelen, min_z + sidelen, max_z + sidelen, position));
+    // printf("%lf\n", distance);
 
     return distance;
 }
@@ -102,10 +129,7 @@ double domain_distance(pos_t position, int domain) {
 void populate_cutoffs(dom_t domains[8], int domain, pos_t position, int index) {
     for (int i = 0; i < 8; i++) {
         if (i == domain) continue;
-        if (domain_distance(position, i) < cutoff) {
-            domains[i].cutoff[domains[i].cutoff_num] = i;
-            domains[i].cutoff_num++;
-        }
+        if (domain_distance(position, i) < cutoff) push_domain_cutoff(&domains[i], index);
     }
 }
 
@@ -120,5 +144,17 @@ void populate_domains(dom_t domains[8], pos_t *positions, int n) {
         push_domain_within(&domains[domain], i);
 
         populate_cutoffs(domains, domain, positions[i], i);
+    }
+}
+
+void print_domains(dom_t domains[8]) {
+    printf("PRINTING DOMAINS -------------------------------------------------\n");
+    for (int i = 0; i < 8; i++) {
+        printf("Domain %d: cutoff num = %d, within num = %d\n", i, domains[i].cutoff_num, domains[i].within_num);
+        printf("- Within: ");
+        for (int j = 0; j < domains[i].within_num; j++) printf("%d, ", domains[i].within[j]);
+        printf("\n- Cutoff: ");
+        for (int j = 0; j < domains[i].cutoff_num; j++) printf("%d, ", domains[i].cutoff[j]);
+        printf("\n\n");
     }
 }
