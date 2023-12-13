@@ -47,7 +47,7 @@ void run_md(char *run_name, bool debug) {
     double total_K = 0, total_U = 0, total_T = 0, total_P = 0;
 
     init_domains(domains, particles);
-    populate_domains(domains, positions, particles);
+    populate_domains_2(domains, positions, particles);
     // print_domains(domains);
 
     // printf("%lf\n", domain_distance(positions[2], 0));
@@ -58,7 +58,7 @@ void run_md(char *run_name, bool debug) {
 
         for (int dom = 0; dom < 8; dom++) {
             update_velocities_first(domains, dom, velocities, forces, drag, particles, i <= thermostat_steps, tstep / 2);  // v(t + dt/2)
-            populate_domains(domains, positions, particles);
+            // populate_domains(domains, positions, particles);
             update_positions(domains, dom, positions, velocities, particles, tstep);  // r(t + dt)
             update_displacements(domains, dom, displacements, velocities, particles, tstep);
             update_momentums(domains, dom, momentums, velocities, particles);  // m(t + dt/2)

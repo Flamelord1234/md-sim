@@ -51,7 +51,10 @@ double min(double a, double b) {
     return a > b ? b : a;
 }
 
-double box_distance(double min_x, double max_x, double min_y, double max_y, double min_z, double max_z, pos_t position) {
+double box_distance(double min_x, double min_y, double min_z, pos_t position) {
+    double max_x = min_x + sidelen / 2;
+    double max_y = min_y + sidelen / 2;
+    double max_z = min_z + sidelen / 2;
     double dx = max(min_x - position.x, 0, position.x - max_x);
     double dy = max(min_y - position.y, 0, position.y - max_y);
     double dz = max(min_z - position.z, 0, position.z - max_z);
@@ -60,68 +63,23 @@ double box_distance(double min_x, double max_x, double min_y, double max_y, doub
 
 double domain_distance(pos_t position, int domain) {
     double min_x = 0 + (sidelen / 2) * ((domain & 0b100) >> 2);
-    double max_x = (sidelen / 2) + (sidelen / 2) * ((domain & 0b100) >> 2);
     double min_y = 0 + (sidelen / 2) * ((domain & 0b10) >> 1);
-    double max_y = (sidelen / 2) + (sidelen / 2) * ((domain & 0b10) >> 1);
     double min_z = 0 + (sidelen / 2) * (domain & 1);
-    double max_z = (sidelen / 2) + (sidelen / 2) * (domain & 1);
 
-    double distance = box_distance(min_x, max_x, min_y, max_y, min_z, max_z, position);
-    // printf("%lf\n", distance);
-    distance = min(distance, box_distance(min_x, max_x, min_y, max_y, min_z - sidelen, max_z - sidelen, position));
-    // printf("%lf\n", distance);
-    distance = min(distance, box_distance(min_x, max_x, min_y, max_y, min_z + sidelen, max_z + sidelen, position));
-    // printf("%lf\n", distance);
-    distance = min(distance, box_distance(min_x, max_x, min_y - sidelen, max_y - sidelen, min_z, max_z, position));
-    // printf("%lf\n", distance);
-    distance = min(distance, box_distance(min_x, max_x, min_y - sidelen, max_y - sidelen, min_z - sidelen, max_z - sidelen, position));
-    // printf("%lf\n", distance);
-    distance = min(distance, box_distance(min_x, max_x, min_y - sidelen, max_y - sidelen, min_z + sidelen, max_z + sidelen, position));
-    // printf("%lf\n", distance);
-    distance = min(distance, box_distance(min_x, max_x, min_y + sidelen, max_y + sidelen, min_z, max_z, position));
-    // printf("%lf\n", distance);
-    distance = min(distance, box_distance(min_x, max_x, min_y + sidelen, max_y + sidelen, min_z - sidelen, max_z - sidelen, position));
-    // printf("%lf\n", distance);
-    distance = min(distance, box_distance(min_x, max_x, min_y + sidelen, max_y + sidelen, min_z + sidelen, max_z + sidelen, position));
-    // printf("%lf\n", distance);
-    
-    distance = min(distance, box_distance(min_x - sidelen, max_x - sidelen, min_y, max_y, min_z, max_z, position));
-    // printf("%lf\n", distance);
-    distance = min(distance, box_distance(min_x - sidelen, max_x - sidelen, min_y, max_y, min_z - sidelen, max_z - sidelen, position));
-    // printf("%lf\n", distance);
-    distance = min(distance, box_distance(min_x - sidelen, max_x - sidelen, min_y, max_y, min_z + sidelen, max_z + sidelen, position));
-    // printf("%lf\n", distance);
-    distance = min(distance, box_distance(min_x - sidelen, max_x - sidelen, min_y - sidelen, max_y - sidelen, min_z, max_z, position));
-    // printf("%lf\n", distance);
-    distance = min(distance, box_distance(min_x - sidelen, max_x - sidelen, min_y - sidelen, max_y - sidelen, min_z - sidelen, max_z - sidelen, position));
-    // printf("%lf\n", distance);
-    distance = min(distance, box_distance(min_x - sidelen, max_x - sidelen, min_y - sidelen, max_y - sidelen, min_z + sidelen, max_z + sidelen, position));
-    // printf("%lf\n", distance);
-    distance = min(distance, box_distance(min_x - sidelen, max_x - sidelen, min_y + sidelen, max_y + sidelen, min_z, max_z, position));
-    // printf("%lf\n", distance);
-    distance = min(distance, box_distance(min_x - sidelen, max_x - sidelen, min_y + sidelen, max_y + sidelen, min_z - sidelen, max_z - sidelen, position));
-    // printf("%lf\n", distance);
-    distance = min(distance, box_distance(min_x - sidelen, max_x - sidelen, min_y + sidelen, max_y + sidelen, min_z + sidelen, max_z + sidelen, position));
-    // printf("%lf\n", distance);
+    double distance = -1.0;
 
-    distance = min(distance, box_distance(min_x + sidelen, max_x + sidelen, min_y, max_y, min_z, max_z, position));
-    // printf("%lf\n", distance);
-    distance = min(distance, box_distance(min_x + sidelen, max_x + sidelen, min_y, max_y, min_z - sidelen, max_z - sidelen, position));
-    // printf("%lf\n", distance);
-    distance = min(distance, box_distance(min_x + sidelen, max_x + sidelen, min_y, max_y, min_z + sidelen, max_z + sidelen, position));
-    // printf("%lf\n", distance);
-    distance = min(distance, box_distance(min_x + sidelen, max_x + sidelen, min_y - sidelen, max_y - sidelen, min_z, max_z, position));
-    // printf("%lf\n", distance);
-    distance = min(distance, box_distance(min_x + sidelen, max_x + sidelen, min_y - sidelen, max_y - sidelen, min_z - sidelen, max_z - sidelen, position));
-    // printf("%lf\n", distance);
-    distance = min(distance, box_distance(min_x + sidelen, max_x + sidelen, min_y - sidelen, max_y - sidelen, min_z + sidelen, max_z + sidelen, position));
-    // printf("%lf\n", distance);
-    distance = min(distance, box_distance(min_x + sidelen, max_x + sidelen, min_y + sidelen, max_y + sidelen, min_z, max_z, position));
-    // printf("%lf\n", distance);
-    distance = min(distance, box_distance(min_x + sidelen, max_x + sidelen, min_y + sidelen, max_y + sidelen, min_z - sidelen, max_z - sidelen, position));
-    // printf("%lf\n", distance);
-    distance = min(distance, box_distance(min_x + sidelen, max_x + sidelen, min_y + sidelen, max_y + sidelen, min_z + sidelen, max_z + sidelen, position));
-    // printf("%lf\n", distance);
+    for (int x1 = 0; x1 < 3; x1++) {
+        for (int y1 = 0; y1 < 3; y1++) {
+            for (int z1 = 0; z1 < 3; z1++) {
+                double x = min_x + (sidelen * (x1 - 1));
+                double y = min_y + (sidelen * (y1 - 1));
+                double z = min_z + (sidelen * (z1 - 1));
+                
+                double temp_d = box_distance(x, y, z, position);
+                distance = (((distance == -1.0) || (temp_d < distance)) ? temp_d : distance);
+            }
+        }
+    }
 
     return distance;
 }

@@ -33,7 +33,7 @@ int num_lines(char *run_name) {
     while (fscanf(file, "%lf", &temp) > 0) res++;
 
     fclose(file);
-    return res / 3;
+    return (res - 1) / 3;
 }
 
 /* Distance from p1 to nearest image of p2 */

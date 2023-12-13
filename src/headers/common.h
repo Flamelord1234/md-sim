@@ -20,7 +20,7 @@ extern const int steps;
 extern const int thermostat_steps;
 
 /* Side length of bounding box */
-extern const double sidelen;
+extern double sidelen;
 
 /* Scaling factor for random velocity generation */
 extern const double velstd;

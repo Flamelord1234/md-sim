@@ -10,10 +10,10 @@ const double tstep = 0.002L;
 const int steps = 500 * 20;
 
 /* Number of time steps until thermostat turns off */
-const int thermostat_steps = 500 * 10;
+const int thermostat_steps = 0;
 
 /* Side length of bounding box */
-const double sidelen = 6.8L;
+double sidelen;
 
 /* Scaling factor for random velocity generation */
 const double velstd = 0.70710678118L;

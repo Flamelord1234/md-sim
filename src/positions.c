@@ -4,6 +4,8 @@ pos_t *init_positions(char *run_name, int n) {
     pos_t *positions = malloc(n * sizeof(pos_t));
     FILE *file = input_file(run_name);
 
+    fscanf(file, "%lf", &sidelen);
+
     for (int i = 0; i < n; i++) {
         double x, y, z;
         fscanf(file, "%lf", &x);
