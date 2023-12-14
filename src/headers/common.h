@@ -7,6 +7,7 @@
 #include <time.h>
 #include <string.h>
 #include <stdbool.h>
+#include <pthread.h>
 
 /* Globals initialized and defined in `main.h` or `main.c` */
 
@@ -68,6 +69,7 @@ struct domain {
     int within_num;
     int *cutoff;
     int cutoff_num;
+    pthread_t thread;
 };
 typedef struct domain dom_t;
 

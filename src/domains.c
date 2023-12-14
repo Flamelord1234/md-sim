@@ -36,7 +36,10 @@ int get_domain_within(pos_t position) {
         return 6;
     } else if (position.x < sidelen && position.y < sidelen && position.z < sidelen) {
         return 7;
-    } else printf("ERROR!!!\n");
+    }
+    
+    printf("ERROR!!!\n");
+    return -1;
 }
 
 double max(double a, double b, double c) {
