@@ -4,10 +4,12 @@ void *run_domain1(void *args) {
     void **real_args = args;
 
     int dom = *(int*) real_args[0];
-    // free(real_args[0]);
+    free(real_args[0]);
 
     int particles = *(int*) real_args[1];
-    // free(real_args[1]);
+    free(real_args[1]);
+
+    // printf("%d\n", particles);
     
     dom_t *domains = real_args[2];
 
@@ -20,10 +22,10 @@ void *run_domain1(void *args) {
     pos_t *displacements = real_args[6];
 
     drg_t drag = *(drg_t*) real_args[7];
-    // free(real_args[7]);
+    free(real_args[7]);
 
     int i = *(int*) real_args[8];
-    // free(real_args[8]);
+    free(real_args[8]);
 
     mom_t *momentums = real_args[9];
 
@@ -32,7 +34,6 @@ void *run_domain1(void *args) {
     free(real_args);
 
     update_velocities_first(domains, dom, velocities, forces, drag, particles, i <= thermostat_steps, tstep / 2);  // v(t + dt/2)
-    populate_domains(domains, positions, particles);
     update_positions(domains, dom, positions, velocities, particles, tstep);  // r(t + dt)
     update_displacements(domains, dom, displacements, velocities, particles, tstep);
     update_momentums(domains, dom, momentums, velocities, particles);  // m(t + dt/2)
@@ -45,12 +46,10 @@ void *run_domain2(void *args) {
     void **real_args = args;
 
     int dom = *(int*) real_args[0];
-    // free(real_args[0]);
+    free(real_args[0]);
 
     int particles = *(int*) real_args[1];
-
-    printf("%d\n", particles);
-    // free(real_args[1]);
+    free(real_args[1]);
     
     dom_t *domains = real_args[2];
 
@@ -61,10 +60,10 @@ void *run_domain2(void *args) {
     vel_t *velocities = real_args[5];
 
     drg_t drag = *(drg_t*) real_args[6];
-    // free(real_args[6]);
+    free(real_args[6]);
 
     int i = *(int*) real_args[7];
-    // free(real_args[7]);
+    free(real_args[7]);
 
     mom_t *momentums = real_args[8];
 
@@ -83,7 +82,8 @@ void *run_domain2(void *args) {
 void run_md(char *run_name, bool debug) {
     int particles = num_lines(run_name);
 
-    dom_t domains[8];
+    // dom_t domains[8];
+    dom_t *domains = malloc(8 * sizeof(dom_t));
 
     pos_t *positions = init_positions(run_name, particles);
     pos_t *displacements = init_displacements(particles);
@@ -134,7 +134,7 @@ void run_md(char *run_name, bool debug) {
     // return;
 
     for (int i = 1; i <= steps; i++) {
-        if (i % 1 == 0) printf("%d steps...\n", i);
+        if (i % 500 == 0) printf("%d steps...\n", i);
 
         for (int dom = 0; dom < 8; dom++) {
             void **args = malloc(11 * sizeof(void*));
@@ -169,7 +169,7 @@ void run_md(char *run_name, bool debug) {
 
             args[10] = kinetics;
 
-            pthread_create(&domains[dom].thread, NULL, run_domain2, args);
+            pthread_create(&domains[dom].thread, NULL, run_domain1, args);
             // run_domain1(args);
         }
         
@@ -187,6 +187,7 @@ void run_md(char *run_name, bool debug) {
         // populate_domains(domains, positions, particles);
         // print_domains(domains);
 
+        populate_domains(domains, positions, particles);
         temperature = calc_temperature(kinetics, particles);  // T(t + dt/2)
         drag = update_drag(drag, temperature, tstep);  // d(t + dt)
 

@@ -90,6 +90,7 @@ double domain_distance(pos_t position, int domain) {
 void populate_cutoffs(dom_t domains[8], int domain, pos_t position, int index) {
     for (int i = 0; i < 8; i++) {
         if (i == domain) continue;
+        // printf("%d\n", index);
         if (domain_distance(position, i) < cutoff) push_domain_cutoff(&domains[i], index);
     }
 }
