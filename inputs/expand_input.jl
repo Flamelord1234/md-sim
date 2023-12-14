@@ -1,4 +1,6 @@
+module buildInfiles
 using Printf
+export buildInfile;
 
 # Reads the contents of the file into an array of floats.
 #
@@ -21,34 +23,22 @@ function read_infile(infile)
     return out
 end
 
-# Writes data to a file.
+# Creates an infile for given simulation sidelen, with same density as liquid256
 #
-# parameter - 📩: matrix of data to store
-# parameter - 📭: location to store data
-function write_data(📩, 📭)
-    t = size(📩)[1]
-    📨 = ""
-    for i = 1:t
-        📨 *= @sprintf("%s\n", sprint(show, 📩[i,:])[2:end-1])
-    end
-    write(📭, 📨)
-end
+# parameter - sidelen: length of simulation box side
+# parameter - N: number of particles
+# returns: filename of o
+function buildInfile(sidelen, N)
+    if N == 256 || N == 2048 return end
+    positions = rand(Float64, (N,3)) .* sidelen;
 
-# Creates an input file that consists of the original file doubled in each dim
-#
-# parameter - infile: path to the file to read
-function main(infile)
-    data = read_infile(infile)
-    N = size(data)[1]
-    out = Array{Float64}(undef, N*8, 3)
-    for i = 0:7
-        d = [(i & 0b001) ((i & 0b010) >> 1) ((i & 0b100) >> 2)] .* 6.8
-        for row = 1:N
-            out[row+N*i, :] = data[row, :] .+ d';
-        end
+    output = @sprintf("%f\n", sidelen);
+    for i = 1:N
+        output *= @sprintf("%s\n", sprint(show, positions[i,:])[2:end-1])
     end
-    
-    write_data(out, "md-sim/inputs/liquid2048.txt")
-end
 
-main("liquid256.txt")
+    outfile = @sprintf("inputs/liquid%d.txt", N)
+    write(outfile, output)
+    return outfile
+end
+end
