@@ -39,7 +39,6 @@ function buildInfile(sidelen, N)
         for i = 1:N
             output *= @sprintf("%s\n", sprint(show, positions[i,:])[2:end-1])
         end
-        println(output)
         
         outfile = @sprintf("./inputs/%s.txt", arg)
         write(outfile, output)

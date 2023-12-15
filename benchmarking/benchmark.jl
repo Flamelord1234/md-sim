@@ -33,8 +33,8 @@ function runTest(sidelen)
     arg = buildInfile(sidelen, N)
 
     # CHANGE THESE BASED ON SYSTEM -- win should have ./md.exe, mac has ./md
-    parallelCmd = `./benchmarking/md-parallel.exe $arg`
-    sequentialCmd = `./benchmarking/md-sequential.exe $arg`
+    parallelCmd = `./md-parallel.exe $arg`
+    sequentialCmd = `./md-sequential.exe $arg`
     
     tpar = timeRun(parallelCmd)
     tseq = timeRun(sequentialCmd)
