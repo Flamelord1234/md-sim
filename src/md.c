@@ -33,11 +33,18 @@ void *run_domain1(void *args) {
 
     free(real_args);
 
+    // printf("got args %d\n", dom);
+
     update_velocities_first(domains, dom, velocities, forces, drag, particles, i <= thermostat_steps, tstep / 2);  // v(t + dt/2)
+    // printf("got vels %d\n", dom);
     update_positions(domains, dom, positions, velocities, particles, tstep);  // r(t + dt)
+    // printf("got pos %d\n", dom);
     update_displacements(domains, dom, displacements, velocities, particles, tstep);
+    // printf("got disp %d\n", dom);
     update_momentums(domains, dom, momentums, velocities, particles);  // m(t + dt/2)
+    // printf("got moms %d\n", dom);
     update_kinetics(domains, dom, kinetics, momentums, particles);  // K(t + dt/2)
+    // printf("got kins %d\n", dom);
 
     return NULL;
 }
@@ -134,7 +141,7 @@ void run_md(char *run_name, bool debug) {
     // return;
 
     for (int i = 1; i <= steps; i++) {
-        if (i % 500 == 0) printf("%d steps...\n", i);
+        if (i % 50 == 0) printf("%d steps...\n", i);
 
         for (int dom = 0; dom < 8; dom++) {
             void **args = malloc(11 * sizeof(void*));
@@ -170,6 +177,7 @@ void run_md(char *run_name, bool debug) {
             args[10] = kinetics;
 
             pthread_create(&domains[dom].thread, NULL, run_domain1, args);
+            // printf("created %d\n", dom);
             // run_domain1(args);
         }
         
@@ -182,8 +190,12 @@ void run_md(char *run_name, bool debug) {
         //     update_kinetics(domains, dom, kinetics, momentums, particles);  // K(t + dt/2)
         // }
 
-        for (int dom = 0; dom < 8; dom++) pthread_join(domains[dom].thread, NULL);
+        for (int dom = 0; dom < 8; dom++) {
+            pthread_join(domains[dom].thread, NULL);
+            // printf("joined %d\n", dom);
+        }
 
+        // printf("mid\n");
         // populate_domains(domains, positions, particles);
         // print_domains(domains);
 
@@ -234,6 +246,7 @@ void run_md(char *run_name, bool debug) {
         //     update_kinetics(domains, dom, kinetics, momentums, particles);  // K(t + dt)
         // }
         for (int dom = 0; dom < 8; dom++) pthread_join(domains[dom].thread, NULL);
+
 
         memcpy(forces, temp_forces, particles * sizeof(frc_t));
         potential = calc_potential(positions, particles);  // U(t + dt)

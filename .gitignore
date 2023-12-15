@@ -1,6 +1,8 @@
 debug
 outputs/*
 md
+md-par
+md-seq
 a.out
 *.exe
 
