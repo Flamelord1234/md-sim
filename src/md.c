@@ -176,9 +176,12 @@ void run_md(char *run_name, bool debug) {
 
             args[10] = kinetics;
 
+#ifdef SEQ
+            run_domain1(args);
+#else
             pthread_create(&domains[dom].thread, NULL, run_domain1, args);
+#endif
             // printf("created %d\n", dom);
-            // run_domain1(args);
         }
         
         // for (int dom = 0; dom < 8; dom++) {
@@ -190,10 +193,12 @@ void run_md(char *run_name, bool debug) {
         //     update_kinetics(domains, dom, kinetics, momentums, particles);  // K(t + dt/2)
         // }
 
+#ifndef SEQ
         for (int dom = 0; dom < 8; dom++) {
             pthread_join(domains[dom].thread, NULL);
             // printf("joined %d\n", dom);
         }
+#endif
 
         // printf("mid\n");
         // populate_domains(domains, positions, particles);
@@ -236,8 +241,11 @@ void run_md(char *run_name, bool debug) {
 
             args[9] = kinetics;
 
+#ifdef SEQ
+            run_domain2(args);
+#else
             pthread_create(&domains[dom].thread, NULL, run_domain2, args);
-            // run_domain2(args);
+#endif
         }
         // for (int dom = 0; dom < 8; dom++) {
         //     update_forces(domains, dom, temp_forces, positions, particles);
@@ -245,7 +253,9 @@ void run_md(char *run_name, bool debug) {
         //     update_momentums(domains, dom, momentums, velocities, particles);  // m(t + dt)
         //     update_kinetics(domains, dom, kinetics, momentums, particles);  // K(t + dt)
         // }
+#ifndef SEQ
         for (int dom = 0; dom < 8; dom++) pthread_join(domains[dom].thread, NULL);
+#endif
 
 
         memcpy(forces, temp_forces, particles * sizeof(frc_t));
