@@ -1,4 +1,4 @@
-module buildInfiles
+module BuildInfiles
 using Printf
 export buildInfile;
 
@@ -29,16 +29,22 @@ end
 # parameter - N: number of particles
 # returns: filename of o
 function buildInfile(sidelen, N)
-    if N == 256 || N == 2048 return end
-    positions = rand(Float64, (N,3)) .* sidelen;
+    arg = @sprintf("liquid%d", N)
 
-    output = @sprintf("%f\n", sidelen);
-    for i = 1:N
-        output *= @sprintf("%s\n", sprint(show, positions[i,:])[2:end-1])
+    if !((N == 256) || (N == 2048))
+        println("building infile")
+        
+        positions = rand(Float64, (N,3)) .* sidelen;
+        output = @sprintf("%f\n", sidelen);
+        for i = 1:N
+            output *= @sprintf("%s\n", sprint(show, positions[i,:])[2:end-1])
+        end
+        println(output)
+        
+        outfile = @sprintf("./inputs/%s.txt", arg)
+        write(outfile, output)
     end
 
-    outfile = @sprintf("inputs/liquid%d.txt", N)
-    write(outfile, output)
-    return outfile
+    return arg
 end
 end

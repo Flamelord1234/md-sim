@@ -1,6 +1,6 @@
 module BenchmarkParallelCode
 include("../inputs/expand_input.jl")
-using Dates, .buildInfiles
+using Dates, .BuildInfiles
 export runTest
 
 # converts a DateTime object to seconds
@@ -12,8 +12,10 @@ end
 # times running a given line of shell code
 #
 # parameter - cmd: shell command to run
+# parameter - infile: path of input file to run
 # return: runtime in seconds
 function timeRun(cmd)
+    println(cmd)
     tic = getseconds(Dates.now())
     run(cmd)
     toc = getseconds(Dates.now())
@@ -28,11 +30,11 @@ function runTest(sidelen)
     # note: we can change which one we give as input
     # current formula matches density of liquid{256,2048}
     N = Int(round(256 * (sidelen / 6.8)^3));
-    infile = buildInfile(sidelen, N)
+    arg = buildInfile(sidelen, N)
 
     # CHANGE THESE BASED ON SYSTEM -- win should have ./md.exe, mac has ./md
-    parallelCmd = `./md-parallel.exe $infile`
-    sequentialCmd = `./md-sequential.exe $infile`
+    parallelCmd = `./benchmarking/md-parallel.exe $arg`
+    sequentialCmd = `./benchmarking/md-sequential.exe $arg`
     
     tpar = timeRun(parallelCmd)
     tseq = timeRun(sequentialCmd)

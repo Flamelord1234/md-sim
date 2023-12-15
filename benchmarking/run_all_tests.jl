@@ -1,7 +1,19 @@
-include("../inputs/expand_input.jl"); using .buildInfiles;
+include("../inputs/expand_input.jl"); include("benchmark.jl")
+using .BuildInfiles, .BenchmarkParallelCode, Printf
 
 function main()
-    buildInfile(3.0, 22)
+    numtests = 4 # parallel should only pick up past 2
+    sidelens = range(6.8, step=3.4, length=numtests)
+    data = zeros(length(sidelens), 3)
+    output = "";
+    for i = eachindex(sidelens)
+        bench = runTest(sidelens[i])
+        data[i,:] = bench
+        output *= @sprintf("%s\n", sprint(show, bench)[2:end-1])
+    end
+
+    outfile = @sprintf("benchmarking/test%d.txt", i)
+    write(outfile, output)
 end
 
 main()

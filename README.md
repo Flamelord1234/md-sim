@@ -5,7 +5,7 @@ gcc -O3 -o md src/*.c
 ```
 Windows:
 ```
-gcc -O3 -o md src/util.c src/domains.c src/drag.c src/energies.c src/forces.c src/momentums.c src/positions.c src/pressure.c src/temperature.c src/velocities.c src/md.c src/main.c
+gcc -pthread -O3 -o md src/util.c src/domains.c src/drag.c src/energies.c src/forces.c src/momentums.c src/positions.c src/pressure.c src/temperature.c src/velocities.c src/md.c src/main.c
 
 ./md.exe <run name>
 ```
