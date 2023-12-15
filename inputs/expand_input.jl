@@ -37,7 +37,7 @@ function buildInfile(sidelen, N)
         positions = rand(Float64, (N,3)) .* sidelen;
         output = @sprintf("%f\n", sidelen);
         for i = 1:N
-            output *= @sprintf("%s\n", sprint(show, positions[i,:])[2:end-1])
+            output *= @sprintf("%f %f %f\n", positions[i,1], positions[i,2], positions[i,3])
         end
         
         outfile = @sprintf("./inputs/%s.txt", arg)

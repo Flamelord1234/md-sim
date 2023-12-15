@@ -2,8 +2,8 @@ include("../inputs/expand_input.jl"); include("benchmark.jl")
 using .BuildInfiles, .BenchmarkParallelCode, Printf
 
 function main()
-    numtests = 4 # parallel should only pick up past 2
-    sidelens = range(6.8, step=3.4, length=numtests)
+    numtests = 2 # parallel should only pick up past 2
+    sidelens = range(10.2, step=3.4, length=numtests)
     data = zeros(length(sidelens), 3)
     output = "";
     for i = eachindex(sidelens)
