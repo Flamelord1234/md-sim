@@ -31,12 +31,20 @@ void update_positions(dom_t domains[8], int domain, pos_t *positions, vel_t *vel
         positions[domains[domain].within[i]].y += tdelta * velocities[domains[domain].within[i]].y;
         positions[domains[domain].within[i]].z += tdelta * velocities[domains[domain].within[i]].z;
 
-        while (positions[domains[domain].within[i]].x >= sidelen) positions[domains[domain].within[i]].x -= sidelen;
+        // printf("hii\n");
+        positions[domains[domain].within[i]].x = fmod(positions[domains[domain].within[i]].x, sidelen);
+        // printf("%d x: %lf\n", domains[domain].within[i], positions[domains[domain].within[i]].x);
+        // while (positions[domains[domain].within[i]].x >= sidelen) positions[domains[domain].within[i]].x -= sidelen;
         while (positions[domains[domain].within[i]].x < 0) positions[domains[domain].within[i]].x += sidelen;
-        while (positions[domains[domain].within[i]].y >= sidelen) positions[domains[domain].within[i]].y -= sidelen;
+        positions[domains[domain].within[i]].y = fmod(positions[domains[domain].within[i]].y, sidelen);
+        // printf("%d y: %lf\n", domains[domain].within[i], positions[domains[domain].within[i]].y);
+        // while (positions[domains[domain].within[i]].y >= sidelen) positions[domains[domain].within[i]].y -= sidelen;
         while (positions[domains[domain].within[i]].y < 0) positions[domains[domain].within[i]].y += sidelen;
-        while (positions[domains[domain].within[i]].z >= sidelen) positions[domains[domain].within[i]].z -= sidelen;
+        positions[domains[domain].within[i]].z = fmod(positions[domains[domain].within[i]].z, sidelen);
+        // printf("%d z: %lf\n", domains[domain].within[i], positions[domains[domain].within[i]].z);
+        // while (positions[domains[domain].within[i]].z >= sidelen) positions[domains[domain].within[i]].z -= sidelen;
         while (positions[domains[domain].within[i]].z < 0) positions[domains[domain].within[i]].z += sidelen;
+        // printf("byee\n");
     }
 }
 

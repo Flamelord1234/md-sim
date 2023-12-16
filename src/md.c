@@ -141,7 +141,8 @@ void run_md(char *run_name, bool debug) {
     // return;
 
     for (int i = 1; i <= steps; i++) {
-        if (i % 50 == 0) printf("%d steps...\n", i);
+        if (i % 500 == 0) printf("%d steps...\n", i);
+        // if (i % 1 == 0) printf("%d steps...\n", i);
 
         for (int dom = 0; dom < 8; dom++) {
             void **args = malloc(11 * sizeof(void*));
