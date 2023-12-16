@@ -1,7 +1,10 @@
 **Usage:**
 ```console
-gcc -O3 -o md src/*.c
-./md <run name>
+gcc -O3 -o md-seq -DSEQ src/*.c
+./md-seq <run name>
+
+gcc -O3 -o md-par src/*.c
+./md-par <run name>
 ```
 Windows:
 ```
